@@ -1,0 +1,9 @@
+1、包可以是一个文件也可以是包含一个或多个文件的目录
+如果是目录node 通常需要index.js作为入口（可以通过package.json修改）
+{ "main": "./currency.js"}
+
+2、通过设置exports的属性 可以组装函数和属性
+    exports.somefunction = function() {}
+    exports.someval = val
+
+3、通过module.exports向外部提供单个变量或函数或对象
