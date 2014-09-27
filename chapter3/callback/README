@@ -1,5 +1,9 @@
 异步编程
     用回调处理一次性事件
+        见blog_recent.js
+        嵌套回调
+        见blot_recent_with_middle_func.js
+        使用中间函数减少嵌套
     用事件发射器处理重复性事件
     异步开发的难题
 异步逻辑的顺序化
