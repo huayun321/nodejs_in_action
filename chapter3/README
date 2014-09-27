@@ -19,7 +19,13 @@ node的模块（package目录）
                 见blog_recent_with_middle_func_with_returnif
 
     用事件发射器处理重复性事件
-        事件发射器示例
+        1、事件发射器示例
+            见echo_server.js
+        2、响应只应该发生一次的事件
+            见echo_server.js
+        3、创建事件发射器：一个PUB/SUB的例子
+            用node自带的事件模块创建自己的事件发射器
+                见channel.js
     异步开发的难题
 异步逻辑的顺序化
     什么时候使用串行流程控制
