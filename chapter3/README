@@ -1,0 +1,29 @@
+node的模块（package目录）
+1、包可以是一个文件也可以是包含一个或多个文件的目录
+如果是目录node 通常需要index.js作为入口（可以通过package.json修改）
+{ "main": "./currency.js"}
+
+2、通过设置exports的属性 可以组装函数和属性
+    exports.somefunction = function() {}
+    exports.someval = val
+
+3、通过module.exports向外部提供单个变量或函数或对象
+
+异步编程
+    用回调处理一次性事件（callback目录）
+        嵌套回调
+            见blog_recent.js
+        使用中间函数减少嵌套
+            见blog_recent_with_middle_func.js
+            使用return 减少回调嵌套
+                见blog_recent_with_middle_func_with_returnif
+
+    用事件发射器处理重复性事件
+        事件发射器示例
+    异步开发的难题
+异步逻辑的顺序化
+    什么时候使用串行流程控制
+    实现串行化流程控制
+    实现并行化流程控制
+    利用社区里的工具
+小结
