@@ -27,6 +27,10 @@ node的模块（package目录）
             用node自带的事件模块创建自己的事件发射器
                 见channel.js
                 见pub-sub.js
+            错误处理
+                常规处理方式
+                    创建发出error类型事件的事件发射器
+                    见exception.js
     异步开发的难题
 异步逻辑的顺序化
     什么时候使用串行流程控制
