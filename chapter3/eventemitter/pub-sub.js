@@ -11,7 +11,14 @@ channel.on('join', function (id, client) {
             this.clients[id].write(message);
         }
     };
+    //add listener on every client when broadcast emit
     this.on('broadcast', this.subscriptions[id]);
+});
+
+//add listener when some client leave
+channel.on('leave', function (id) {
+    channel.removeListener('broadcast', this.subscriptions[id]);
+    channel.emit('broadcast', id, id + ' has left the chat.\n');
 });
 
 var server = net.createServer(function (client) {
@@ -22,6 +29,11 @@ var server = net.createServer(function (client) {
     client.on('data', function (data) {
         data = data.toString();
         channel.emit('broadcast', id, data);
+    });
+
+    //when client close emit leave event
+    client.on('close', function () {
+        channel.emit('leave', id);
     });
 });
 
