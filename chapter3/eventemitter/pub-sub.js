@@ -3,6 +3,9 @@ var net = require('net');
 var channel = new events.EventEmitter();
 channel.clients = {};
 channel.subscriptions = {};
+//one emitter default max listener is set to 10
+//if have more than 10 listeners will got an warn
+channel.setMaxListeners(50);
 
 channel.on('join', function (id, client) {
     //get listener length
