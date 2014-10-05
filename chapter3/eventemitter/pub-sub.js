@@ -32,7 +32,7 @@ channel.on('leave', function (id) {
 //add listener remove all clients' broadcast listener
 //when some client type shutdown
 channel('shutdown', function () {
-    channel.emit('broadcast', '', "Chat has chut down.\n");
+    channel.emit('broadcast', '', "Chat has shut down.\n");
     channel.removeAllListeners('broadcast');
 });
 
