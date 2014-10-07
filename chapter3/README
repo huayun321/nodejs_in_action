@@ -52,6 +52,8 @@ node的模块（package目录）
         这时候可以使用流程控制工具让代码容易阅读。
             见series-use-nimble.js
     实现串行化流程控制
+        见random_story.js
+        放在数组中按顺序执行
     实现并行化流程控制
     利用社区里的工具
 小结
