@@ -1,6 +1,16 @@
 第四章 构建node web程序
 
 4.1 HTTP服务器的基础知识
+    node 程序分层概览
+        node核心模块 querystring http net
+        社区模块 node-formidable node-cgi socket.io mongoose express connect
+        应用逻辑 http.createServer() app.use()
+    本节内容：
+        node如何向开发者呈现http请求
+        如何编写一个简单的HTTP服务器，用“hello world”做响应;
+        如何读取请求头，以及如何设置响应头
+        如何设置http响应的状态码
+
 4.1.1 node 如何向开发者呈现HTTP请求
 4.1.2 一个用“Hello World”做响应的HTTP服务器
 4.1.3 读取请求头及设定响应头
