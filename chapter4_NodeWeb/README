@@ -34,8 +34,22 @@
 
         添加和移除响应头的顺序可以随意，
         但一定要在res.write()或res.end()之前
+        node在响应主体的第一部分写入后，会刷新已经设定好的响应头
 
 4.1.4 设定HTTP响应的代码
+        除了默认的200状态码，有时要返回其他状态码 例如404 302 等等
+        通过res.statusCode设定
+        在程序响应期间可以随时给这个属性赋值
+        必须在第一次调用res.write 和res.end之前
+
+        var url = 'http://google.com';
+        var body = '<p>Redirecting to <a href="' + url + '">'
+                    + url + '</a></p>';
+        res.setHeader('Location', url);
+        res.setHeader('Content-Length', body.length);
+        res.setHeader('Content-Type', 'text/html');
+        res.statusCode = 302;
+        res.end(body);
 
 4.2 构建RESTful Web 服务
 4.2.1 用POST请求创建资源
