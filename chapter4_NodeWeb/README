@@ -22,6 +22,18 @@
         helloworld.js
 
 4.1.3 读取请求头及设定响应头
+        node提供了几个修改http响应头的方法：
+            res.setHeader(field, values)
+            res.getHeader(field)
+            res.removeHeader(field)
+
+            var body = 'Hello world';
+            res.setHeader('Content-Length', body.length);
+            res.setHeader('Content-Type', 'text/plain');
+            res.end(body);
+
+        添加和移除响应头的顺序可以随意，
+        但一定要在res.write()或res.end()之前
 
 4.1.4 设定HTTP响应的代码
 
