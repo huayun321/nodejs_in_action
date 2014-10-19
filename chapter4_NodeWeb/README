@@ -55,9 +55,9 @@
     restful post get update delete
     soap
 4.2.1 用POST请求创建资源
-        todo.js
+
 4.2.2 用GET请求获取资源
-        todo.js
+
 4.2.3 用DELETE请求移除资源
 
 4.3 提供静态文件服务
