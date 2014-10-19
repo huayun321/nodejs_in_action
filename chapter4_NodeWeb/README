@@ -61,7 +61,17 @@
 4.2.3 用DELETE请求移除资源
 
 4.3 提供静态文件服务
+    创建一个简单的静态文件服务器
+    用pipe()优化传输数据
+    通过设定状态码处理用户和文件系统错误
 4.3.1 创建一个静态文件服务器
+        __dirname 是当前文件所在位置
+        可以使用pipe 从一个readable stream 写入到一个writeable stream
+        ReadableStream.pipe(WritableStream);
+        var readStream = fs.createReadStream('./original.txt')
+        var writeStream = fs.createWriteStream('./copy.txt')
+        readStream.pipe(writeStream);
+        req.pipe(fs.createWriteStream('./req-body.txt');
 4.3.2 处理服务器错误
 4.3.3 用fs.stat()实现先发制人的错误处理
 
