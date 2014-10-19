@@ -73,8 +73,9 @@
         readStream.pipe(writeStream);
         req.pipe(fs.createWriteStream('./req-body.txt');
 4.3.2 处理服务器错误
+        如果文件不存在  上面所写的file server会出现错误
 4.3.3 用fs.stat()实现先发制人的错误处理
-
+        file_server_with_error_check.js
 4.4 从表单中接受用户输入
 4.4.1 处理提交的表单域
 4.4.2 用formidable处理上传的文件
