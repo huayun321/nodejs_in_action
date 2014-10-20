@@ -77,7 +77,19 @@
 4.3.3 用fs.stat()实现先发制人的错误处理
         file_server_with_error_check.js
 4.4 从表单中接受用户输入
+    处理提交的表单域
+    用formidable处理上传文件
+    实时计算上传进度
+
 4.4.1 处理提交的表单域
+        form.js
+
+        //querystring
+        node
+        var qs = require('querystring');
+        var body = 'item=take+ferrets+to+the+vet';
+        qs.pare(body);
+        {item:'take ferrets to the vet'}
 4.4.2 用formidable处理上传的文件
 4.4.3 计算上传进度
 
