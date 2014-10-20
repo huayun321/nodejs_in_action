@@ -88,7 +88,7 @@
         node
         var qs = require('querystring');
         var body = 'item=take+ferrets+to+the+vet';
-        qs.pare(body);
+        qs.parse(body);
         {item:'take ferrets to the vet'}
 4.4.2 用formidable处理上传的文件
 4.4.3 计算上传进度
