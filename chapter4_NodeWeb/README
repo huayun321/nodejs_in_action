@@ -91,6 +91,13 @@
         qs.parse(body);
         {item:'take ferrets to the vet'}
 4.4.2 用formidable处理上传的文件
+        通过npm 安装formidable
+        创建一个IncomingForm实例
+        调用form.parse()解析HTTP请求对象
+        监听表单事件field、file和end
+        使用formidable的高层API
+
+
 4.4.3 计算上传进度
 
 4.5 用HTTPS加强程序的安全性
