@@ -50,6 +50,10 @@ function upload(req, res) {
 //    form.on('end', function() {
 //       res.end('upload complete!');
 //    });
+    form.on('progress', function(bytesReceived, bytesExpected) {
+        var percent = Math.floor(bytesReceived /bytesExpected * 100);
+        console.log(percent);
+    });
 
     //form.parse(req);
     //上面注释掉的模式使 parse on event

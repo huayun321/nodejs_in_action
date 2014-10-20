@@ -99,7 +99,12 @@
 
 
 4.4.3 计算上传进度
-
+        利用formidable的 progress事件
 4.5 用HTTPS加强程序的安全性
+        私钥
+        openssl genrsa 1024 > key.pem
 
+        证书
+        openssl req -x509 -new -key key.pem > key-cert.pem
 4.6 小结
+    //now in my mind fomidable progress  openssl
