@@ -82,6 +82,14 @@
         npm install mysql
 
     2、创建程序的逻辑
+        创建两个文件存放程序逻辑
+        分别是：timetrack_server.js  timetrack.js
+        timetrack_server.js包含：
+            node的http模块
+            程序特定逻辑
+            mysql api
+
+            mysql配置需要填入host user password database
     3、创建辅助函数发送HTML，创建表单，接受表单数据
     4、用MySQL田间数据
     5、删除MySQL数据
