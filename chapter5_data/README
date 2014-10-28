@@ -91,6 +91,8 @@
 
             mysql配置需要填入host user password database
     3、创建辅助函数发送HTML，创建表单，接受表单数据
+        包含node query string API
+        用来发送HTML 接受表单数据的辅助函数
     4、用MySQL田间数据
     5、删除MySQL数据
     6、更新MySQL数据

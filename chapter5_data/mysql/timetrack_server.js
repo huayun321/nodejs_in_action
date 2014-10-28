@@ -19,18 +19,23 @@ var server = http.createServer(function(req, res) {
        case 'POST':
            switch (req.url) {
                case '/':
+                   work.add(db, req, res);
                    break;
                case '/archive':
+                   work.archive(db, req, res);
                    break;
                case '/delete':
+                   work.delete(db, req, res);
                    break;
            }
            break;
        case 'GET':
            switch (req.url) {
                case '/':
+                   work.show(db, res);
                    break;
-               case 'archived':
+               case '/archived':
+                   work.showArchived(db, res);
                    break;
            }
            break;
@@ -48,7 +53,7 @@ db.query(
     + "date DATE, "
     + "archived INT(1) DEFAULT 0, "
     + "description LONGTEXT, "
-    + "PRIMARY KEY(ID)",
+    + "PRIMARY KEY(id))",
     function(err) {
         if (err) throw err;
         console.log('Sever started...');
