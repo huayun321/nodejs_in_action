@@ -134,3 +134,7 @@
     5、用集合存储和获取数据
     6、用信道传递数据
     7、node_redis性能最大化
+        hiredis会显著提高redis的性能
+        npm install hiredis
+        升级nodejs之后 需要重新编译hiredis
+        npm rebuild hiredis
