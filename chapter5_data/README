@@ -138,3 +138,93 @@
         npm install hiredis
         升级nodejs之后 需要重新编译hiredis
         npm rebuild hiredis
+
+
+5.2.2 mongodb
+    mongodb把文档存在集合中
+    集合中的文档不需要相同的schema
+    每个文档都可以有不同的schema
+    使得mongodb比传统的rdbms更灵活
+    因为不需要为预先定义schema而操心
+
+    最成熟维护最活跃的mongodb api模块使node-mongodb-native
+
+    npm install mongodb
+
+    1、链接mongodb
+        var mongodb =require('mongodb');
+        var server = new mongodb.server('127.0.0.1', 27107, {})
+        var client = new mongodb.Db('mydatabase', server, {w:1})
+    2、访问mongodb集合
+        client.open(function(err) {
+            if (err) throw err;
+            client.collection('test_insert', function(err, collection) {
+                if (err) throw err;
+                console.log('we are now able to perform queries.');
+            });
+        });
+
+        向关闭mongodb链接可以执行client.close()
+    3、将文档插入集合中
+        colletion.insert(
+            {
+                "title": "I like cake",
+                "body": "It is quite good"
+            },
+            {safe: true},  //安全模式表明数据库操作应该在回调执行之前完成
+                           //如果回调逻辑对即将完成的数据库操作有任何形式的以来
+                           //这就是你需要的选项
+                           //如果你的回调逻辑不依赖于数据库操作，可以用{}取代{safe:true}关闭安全模式
+            function(err, documents) {
+                if (err) throw err;
+                console.log("Document ID is: " + documents[0]._id);
+            }
+        );
+        机关能用console.log将documents[0]._id显示为字符串
+        mongodb的文档标识符使二进制JSON（BSON）
+        BSON是mongodb用来交换数据的主要数据格式
+        mongodb服务器用它代替json交换数据
+        更节省空间 解析起来占用更少空间 扫表更容易     意味着数据交互更快
+    4、用文档id更新数据
+        bson文档标识符可以用来更新数据
+        下面的代码战士了如何用文档的id更新它
+        var _id = new client.bson_serializer
+                                .ObjectID('4e650d344ac74b5a01000001');
+            collection.update(
+                {_id: _id},
+                {$set: {"title": "I ate too much cake."}},
+                {safe: true},
+                function(err) {
+                    if (err) throw err;
+                }
+            );
+    5、搜索文档
+        collection.find({"title": "I like cake"}).toArray(
+            function(err, results) {
+                if(err) throw err;
+                console.log(results);
+            }
+        );
+    6、删除文档
+        var _id = new client
+                        .bson_serializer
+                        .ObjectID('4e6513f0730d31901000001');
+        collection.remove({_id: _id}, {safe: true}, function(err) {
+            if (err) throw err;
+        });
+
+        mongodb是一个强大的数据库
+        node-mongodb-native提供了高性能的mongodb访问，
+        但你可能享用一个抽象的数据库访问API，在底层帮你处理细节
+        加快开发速度
+        同时维护更少的代码
+        这些API中最流行的使mongoose
+5.3.3 mongoose
+    1、链接的打开和关闭
+    2、注册schema
+    3、添加任务
+    4、搜索文档
+    5、更新文档
+    6、删除文档
+
+5.4小结
