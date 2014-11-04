@@ -220,11 +220,98 @@
         同时维护更少的代码
         这些API中最流行的使mongoose
 5.3.3 mongoose
+    mongoose 使LernBoost提供的一个Nodemokuai
+    mongoose的模型提供了一个到mongodb结合接口，以及一些实用的功能
+    比如schema层次结构  中间件  及 数据校验
+    schema层次结构可以让一个模型跟其他模型关联
+    比如让一片博客文章包含相关的评论
+    中间件可以转换数据
+    或在操作模型的数据过程中触发逻辑
+    让删除父数据时对子数据的修剪这样的任务变成自动化的
+    mongoose的校验支持让你可以在schema层面决定什么养的数据使可接受的
+    而不是必须手工处理它
+    学习它的在线文档mongoosejs.com对它的功能做一个全面了解，可定大有裨益
+    安装
+    npm install mongoose
     1、链接的打开和关闭
-    2、注册schema
-    3、添加任务
-    4、搜索文档
-    5、更新文档
-    6、删除文档
+        var mongoose = require('mongoose');
+        var db = mongoose.connect('mongodb://localhost/tasks');
 
+        mongoose.disconnect();
+    2、注册schema
+        var Schema = mongoose.Schema;
+        var Tasks = new Schema({
+            project: String,
+            description: String
+        });
+        mongoose.model("Task", Tasks);
+
+        mongoose的schema很强大
+        除了定义数据结构
+        还可以设定默认值
+        处理输入
+        加强校验
+        具体见官方文档
+
+    3、添加任务
+        var Task = mongoose.model('Task');
+        var task = new Task();
+        task.project = 'Bikeshed';
+        task.description = 'Paint the bikeshed red.';
+        task.save(function(err) {
+            if (err) throw err;
+            console.log('Task saved.');
+        });
+    4、搜索文档
+        用Mongoose做搜索也一样容易
+        Task模型的find方法可以用来查找所有文档，
+        或者用一个javascript对象指明过滤标准来选择特定的文档
+
+        var Task = mongoose.model('Task');
+        Task.find({'project': 'Bikeshed'}, function(err, tasks) {
+            for (var i =0; i < tasks.length; i++) {
+                console.log('ID:' + tasks[i]._id);
+                console.log(tasks[i].description);
+            }
+        });
+    5、更新文档
+        var Task = mongoose.model('Task');
+        Task.update(
+            {_id: '4e65b793d0cf5ca508000001'}, //用内部id更新
+            {description: "Paint the bikeshed green."},
+            {multi: false},//只更新一个文档
+            function(err, rows_updated) {
+                if (err) throw err;
+                console.log("Updated.");
+            }
+        );
+    6、删除文档
+        一旦取得了文档 要删除它很容易
+        可以用文档的内部id 或其他任何条件 find findById获取和删除文档
+        var Task = mongoose.model('Task');
+        Task.findById('4e65b3dce1592f7d08000001', function(err, task) {
+            task.remove();
+        });
 5.4小结
+    数据存储场景
+    如果正在创建多用户的web程序，很可能用一个DBMS或类似的东西
+    如果喜欢基于SQL的处理方式
+        关系型数据库管理系统MYSQL POSTGRESQL都得到了很好的支持
+
+    如果SQL在性能或灵活性上表现欠佳，
+        REDIS 和MONGODB都是坚强如磐石的可选项
+            MONGODB是极佳的通用DBMS
+            REDIS擅长处理变化频繁，相对比较简单的数据
+
+    如果你不需要一个华丽胡少的、全面的DBMS，想要避免设置上的麻烦，你有几个选项。
+        如果速度和性能使关键，并且你不关心程序重启后的数据持久化
+            内存存储可能很适合你
+        如果你不关心性能，也不需要做复杂的数据查询，就像一个典型的命令行程序一样
+            把数据存储在文件中可能可以满足你的需要
+
+    可以在程序中使用多种存储机制
+    譬如如果你想构建一个内容管理系统，
+        可能会用文件存储web程序的配置选项
+        用Mongodb存储文章
+        用redis存储用户给出的文章评级
+    如何实现持久化完全取决于你的想象力
