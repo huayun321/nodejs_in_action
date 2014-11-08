@@ -8,8 +8,17 @@ function logger(req, res, next) {
     next();
 };
 
-var app = connect();
-app.use(logger);
+function hello(req, res) {
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('hello world');
+}
 
-app.listen(3000);
+var app = connect();
+//app.use(logger);
+//app.use(hello);
+//
+//app.listen(3000);
+app.use(logger)
+    .use(hello)
+    .listen(3000);
 //return 404

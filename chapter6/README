@@ -100,6 +100,46 @@ Express 构建在Connect 之上
         那是你的下一个中间件。
 
     6.2.2 响应“hello world”的中间件
+        这个程序中第二个中间件会给http请求发送响应
+        跟node首页那个"hello world" 服务器里的回调函数一样：
+        function hello(req, res) {
+            res.setHeader('Content-Type', 'text/plain');
+            res.end('hello world');
+        }
+
+        你可以调用.use()方法 把第二个中间件添加到程序中，
+        这个方法可以调用任意多次，
+        添加更多的中间件
+        代码minimal_conn.js把整个程序拼到一起
+        这段代码这样添加hello中间件组件
+        会让服务器首先调用logger
+        向控制台中输出文本
+        然后用“hello world”响应每个http请求：
+        minimal_conn.js
+
+        在这个例子中，中间件组件hello的参数中没有next回调
+        因为这个组件结束了http响应
+        从不需要把控制权交回给分派器
+        对于这种情况，next回调是可选的
+        因为这样跟http.createServer回调函数的签名一致所以更方便
+        也就是如果你已经写了一个只使用http模块的http服务器
+        你就已经有了一个完美的有效的中间件组件
+        可以在你的connect程序中重用
+
+        就像前面代码中写的那样
+        use()函数返回的是支持方法链的Connect程序实例
+        注意，.use()的链式调用不是必须的，比如下面这段代码：
+        var app = connect();
+        app.use(logger);
+        app.use(hello);
+        app.listen(3000);
+
+        这个简单的"hello world"程序可以用了
+        接下来我们要看看为什么中间件.use()调用的顺序很重要
+        以及如何策略性的调整顺序改变程序的工作方式
+
+
+
 6.3 为什么中间件的顺序很重要
     6.3.1 中间件什么时候不调用next()
     6.3.2 用中间件的顺序执行认证
