@@ -308,6 +308,67 @@ Express 构建在Connect 之上
 
 
     6.4.2 显示管理面板的中间件
+        中间件组件admin在请求URL上用switch语句做了一个原始的路由器。
+        当用户请求/时，
+        admin组件会显示一条转发信息，
+        请求/users时，
+        它会返回一个包含用户名的json数据。
+        这个例子中的用户名都是写死在代码里的，
+        但在真实的程序中，
+        用户名应该是从数据库里取出来的。
+
+        代码清单6-7 路由admin请求
+        function admin(req, res, next) {
+            switch (req.url) {
+                case '/':
+                    res.end('try /users');
+                    break;
+                case '/users':
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify(['tobi', 'loki', 'jane']));
+                    break;
+            }
+        }
+
+        这里钥注意的使case中用的使字符串，使/和/users,而不是/admin和/admin/users。
+        这是因为在调用中间件之前，Connect从req.url中去掉了前缀，
+        就像URL挂载在/上一样。
+        这个简单的计数让程序和中间件更灵活，
+        因为他们不用关心他们用在哪。
+
+        比如说，通过挂载，
+        不用修改博客程序代码就可以让博客程序的URL从http://foo.com/blog上
+        迁移到http://bar.com/posts上。
+        因为在挂载后，
+        connect会去掉req.url上的前缀部分。
+        最终结果是博客程序可以用相对/的路径编写，
+        不需要直到是挂载在/blog还是/posts上。
+        请求可以用相同的中间件，共享相同的状态。
+        看一下后面这段代码中的服务器设置，
+        还是那个假想的博客程序，
+        在两个不同的挂载点上挂载它：
+        var connect = require('connect');
+
+        connect()
+            .use(logger)
+            .use('/blog', blog)
+            .use('/posts', blog)
+            .use(hello)
+            .listen(3000);
+
+        测试一下
+        中间件都做好了见auth.js
+        改用curl测试一下这个程序了。
+        你可以看到除了/admin的其他常规URL都能像预期那样调用hello组件;
+        当用户没有给出认证信息，或所有用的认证信息不正确时，
+        你还能看到restric组件会返回错误
+        最后你会看到只有用'tobi'用户通过认证时，
+        admin组件才会被调用，
+        服务器才会响应包含用户的JSON数组
+
+        看到挂载使多么简单又是多么强大了码？
+        接下来我们看一些创建可配置中间件的技术把。
+
 6.5 创建可配置中间件
     6.5.1 创建可配置的logger中间件组件
     6.5.2 构建路由中间件组件
