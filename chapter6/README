@@ -200,7 +200,113 @@ Express 构建在Connect 之上
         接下来我们去看另外一个对你使用中间件有帮助的Connect特性。
 
 6.4 挂载中间件和服务器
+    Connect中有一个挂载的概念，
+    这使一个简单而强大的组织工具，
+    可以给中间件或整个程序定义一个路径前缀。
+    使用挂载，你可以像在根层次下那样编写中间件(/req.url)，
+    并且不修改代码就可以把它用在任一路径前缀上。
+
+    比如说，如果一个中间件组件或服务器挂载到了/blog上，
+    代码中/article/1的req.url
+    通过客户端来访问就是/blog/article/1。
+    这种分离意味着你可以在多个地方重用博客服务器，
+    不用为不同的访问源修改代码。
+    比如说，
+    如果你决定改用/articles(/articles/article/1)提供文章服务，
+    不再用/blog了，
+    只要修改挂载路径前缀就可以了。
+
+    我们在看一个挂载的例子。
+    程序通常都有他们自己的管理区域，
+    比如干预评论和批准新用户。
+    在我们的例子中，
+    这个管理区域会放在/admin上。
+    你需要有办法确保只有被授权的用户才能访问/admin，
+    而网站的其他区域对所有用户都是开放的。
+
+    除了为/根req.url重写请求，
+    挂载还将只对路径前缀（挂载点）内的请求调用中间件或程序。
+    在后面的代码清单中，
+    第二个和第三个user()调用中的第一个参数是字符串'/admin'，
+    然后是中间件组件。
+    这意味着这些组件只用于带有/admin前缀的请求。
+    我们来看一下Connect中挂载中间件或服务器的方法。
+
+    Connect中挂载中间件组件或服务器的语法
+    var connect = require('connect');
+
+    connect()
+        .use(logger)
+        .use('/admin', restrict)
+        .use('/admin', admin)
+        .use(hello)
+        .listen(3000)
+
+    掌握了中间件和服务器挂载的知识，我们来改进下“hello world”程序，
+    给它添加一个管理区。
+    我们会用到挂载，并添加两个新的中间件组件：
+        restrict组件确保访问页面的是有效用户;
+        admin组件会给用户呈现管理区
+        我们先从防止无效用户访问资源的中间件组件开始。
+
+
     6.4.1 认证中间件
+        你要添加的第一个中间件组件会对用户进行认证。
+        这是一个通用的认证组件，
+        不会以任何方式专门绑定在/admin req.url上。
+        但当你把它挂载到程序上时，
+        只有请求URL以/admin开始时，
+        才会调用它。
+        这很重要，因为你只想对试图访问/admin URL的用户进行认证，
+        让常规用户照常通行。
+
+        代码清单6-6实现了简陋的Basic认证逻辑。
+        Base认证使一种简单的认证机制，
+        借助带着Base64编码认证信息的http请求头中的authorization字段进行认证
+        (详情参考：http://wikipedia.org/wiki/Basic_access_authentication)。
+        中间件组件解码认证信息，
+        检查用户名和密码的正确性。
+        如果有效，这个组件会调用next(),
+        表明这个请求没有问题，可以继续处理，
+        否则它会抛出一个错误。
+
+        代码6-6 实现http basic认证的中间件组件
+        function restrict(req, res, next) {
+            var authorization = req.headers.authorization;
+            if (!authorization) return next(new Error('Unauthorized'));
+
+            var parts = authorization.split(' ');
+            var scheme = parts[0];
+            var auth = new Buffer(parts[1], 'base64').toString().split(':');
+            var user = auth[0];
+            var pass = auth[1];
+
+            authenticateWithDatabase(user, pass, function(err) {
+                if (err) return next(err);
+
+                next();
+            });
+        }
+        再次重申， 这个中间件没有检查req.url以确保用户请求的使/admin,
+        因为Connect已经帮我们处理好了。
+        这样你就可以写出通用的中间件。
+        restrict中间件可以用来认证网站的其他部分或其他程序。
+
+        用Error做成熟调用next
+        注意前面例子中用Error对象做参数的next函数调用。
+        这相当于通知Connect程序中出现了错误，
+        也就是对于这个http求情而言，
+        后续执行的中间件只有错误处理中间件。
+        稍等一会儿，
+        我们马上就会谈但错误处理中间件。
+        现在你只要直到，
+        它告诉Connect你的中间件结束了，
+        并且它的执行过程中出现了一个错误。
+
+        在认证正常完成（未出现错误）后，Connect会继续执行下一个中间件组件，
+        也就是本例中的admin。
+
+
     6.4.2 显示管理面板的中间件
 6.5 创建可配置中间件
     6.5.1 创建可配置的logger中间件组件
