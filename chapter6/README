@@ -402,6 +402,55 @@ Express 构建在Connect 之上
     接下来我们先扩展logger组件，让它的可配置性更强。
 
     6.5.1 创建可配置的logger中间件组件
+        本章前面创建的那个logger中间件组件不是可配置的。
+        它是在代码里写死了钥输出请求的req.method和req.url。
+        如果你将来向改变logger显示的信息怎么办呢？
+        你可以手动修改logger组件，
+        但更好的办法使从一开始就把logger做成可配置的，
+        而不是在代码里写死。
+        动手吧！
+
+        在实际工作中，可配置的中间件用来跟你之前创建的中间件用起来是一样的，
+        知识可以向其中传入额外的参数来改变它的行为。
+        在程序中使用可配置组件看起来和下面这个例子有点像，
+        logger能接收一个字符串，描述它应该输出的日志格式：
+        var app = connect()
+            .use(logger(':method :url'))
+            .use(hello);
+
+        实现可配置的logger组件需要先定义一个setup函数，
+        它能接受一个字符串参数（我们把它命名为format）。
+        setup被调用后，
+        会返回一个函数，
+        即Connect所用的真正的中间件组件。
+        即被setup函数返回后，
+        这个组件仍能访问format变量，
+        因为它使在同一个javascript闭包内定义的。
+        然后logger会用req对象中相关联的请求属性提花format中的标记，
+        输出到stdout，调用next()，代码如下所示。
+
+        代码清单6-8 可配置的Connect中间件组件logger
+        function setup(format) {
+            var regexp = /:(\w+)/g;
+            return function logger(req, res, next) {
+                var str = format.replace(regexp, function(match, property) {
+                    return req[property];
+                });
+                console.log(str);
+                next();
+            }
+
+        }
+        module.exports = setup;
+        因为我们将这个logger中间件组件创建成了可配置的中间件，
+        你可以用不同的配置在统一程序中多次.use()这个Logger,
+        或者在将来开发的程序中任意重用这个Logger代码。
+        在真个Connect 社区中都在使用这种简单的可配置中间件概念，
+        并且为了保持一致性，所有Connect核心中间件都在用。
+
+        接下来我们写一个稍微有点逻辑的中间件组件。
+        创建一个将请求映射到业务逻辑的路由器
+        ！
 
 
     6.5.2 构建路由中间件组件
