@@ -590,8 +590,139 @@ Express 构建在Connect 之上
         接下来我们要看Connect中与中间件相关的一个概念：处理程序错误。
 
 6.6 使用错误处理中间件
+    所有程序都有错误，
+    不过在系统层面还是在用户层面。
+    为错误状况，
+    甚至是那些你没预料到的错误状况而未雨绸缪是明智之举。
+    Connect 按照常规中间件所有的规则实现了一种用来处理错误的中间件变体，
+    除了请求和响应对象，
+    还接受一个错误对象作为参数。
+
+    Connect刻意将错误处理做到最简，让开发人员指明应该如何处理错误。
+    比如说，
+    你可以只让系统和程序级错误（比如“变量foo使undefined的”）通过中间件，
+    或者用户错误（“密码无效”），或者两者的组合。
+    Connect 让你自己选择最佳的处理策略。
+
+    本节中两种方式都会用到，
+    并且你能了解到错误处理中间件使如何工作的。
+    在看下面这些内容时，你还能学到一些使用的模式：
+        使用Connect 默认的错误处理器;
+        自己处理程序错误;
+        使用多个错误处理中间件组件。
+
+    我们先从没有任何配置的Connect 错误处理开始。
     6.6.1 Connect的默认错误处理器
+        看一下下面这个中间件组件，
+        因为函数foo()没有定义，
+        所以它会抛出错误ReferenceError
+
+        var connect = require('connect');
+
+        connect()
+            .use(function(req, res) {
+                foo();
+                res.setHeader('Content-Type': 'text/palin');
+                res.end('hello world');
+            })
+            .listen(3000);
+
+        默认情况下，Connect给出的响应使状态码500,
+        包含文本“Internal Server Error”
+        以及错误自身的详细信息的响应主体。
+        这很好，
+        但在任何实际的程序中，
+        你很可能都会对那些错误做些特殊的处理，
+        比如将他们发送给agiel日志守护进程。
+
     6.6.2 自行处理程序错误
+        在Connect中,
+        你还可以用错误处理中间件自行处理程序错误。
+        比如说，
+        在开发时你可以用JSON格式把错误发送到客户端，
+        做简单快捷的错误报告，
+        而在生产环境中，
+        你可能只想响应一个简单的“服务器错误”，
+        以免把命案的内部信息（比如堆栈跟踪，文件名和行号等）
+        暴露给潜在的攻击者。
+
+        错误处理中间件函数必须接受四个参数:err req res 和next，
+        如下面的代码清单所示，
+        而常规的中间件只有三个参数：req res 和 next。
+
+        代码清单6-12 Connect的错误处理中间件
+
+        function errorHandler() {
+            var env = process.env.NODE_ENV || 'development';
+            return function(err, req, res, next) {
+                res.statusCode = 500;
+                switch(env) {
+                    case 'development':
+                        res.setHeader('Conetent-Type', 'application/json');
+                        res.end(JSON.stringify(err));
+                        break;
+                    default:
+                        res.end('Server error');
+                }
+            }
+        }
+
+        用NODE_ENV设定程序的模式
+        Connect通常是用环境变量NODE_ENV(process.env.NODE_ENV)
+        在不同的服务器环境之间切换，
+        比如生产和开发环境。
+
+        当Connect遇到错误时，
+        它只调用错误处理中间件。
+        图略
+
+        比如在前面那个管理程序中，
+        如果给用户路由的路由中间件出现了错误，
+        blog和admin中间件组件都会被跳过去，
+        因为从他们的表现来看都不是错误处理中间件，
+        只定义了三个参数。
+        然后Connect看到接受错误参数的errorHandler，就会调用它：
+        connect()
+            .use(router(require('./routes/user')))
+            .use(router(require('./routes/blog')))  //跳过
+            .use(router(require('./routes/admin')))  //跳过
+            .use(errorHandler())
+
     6.6.3 使用多个错误处理中间件组件
+        用中间件的变体做错误处理对于将错误处理问题分离出来很有帮助。
+        假定你的程序在/api上提供了一项web服务。
+        你可能向在碰到程序错误时渲染一个HTML错误页面给用户，
+        但/api返回更详细的错误信息，
+        可能总是JSON格式的，
+        这样收到错误信息的客户端就很容易解析错误，
+        并作出恰当的应对。
+
+        为了了解这个/api场景的工作机制，
+        请你边看便完成这个小例子。
+        下面的app使Web主程序，
+        api挂载在/api上：
+        var api = connect()
+                    .use(users)
+                    .use(pets)
+                    .use(errorHandler);
+
+        var app = connect()
+                    .use(hello)
+                    .use('/api', api)
+                    .use(errorPage)
+                    .listen(3000)
+        图略
+        现在需要你实现程序中的所有中间件组件：
+            hello组件会给出响应“hello world\n”
+            如果用户不存在，users组件会抛出一个notFoundError;
+            为了演示错误处理器，pets会引发一个要抛出的ReferenceError;
+            errorHandler组件会处理来自api的所有错误;
+            errorPage主机会处理来自主程序app的所有错误
+            1、实现hello中间件组件
+            2、实现users中间件组件
+            3、实现pets中间件组件
+            4、实现errorHandler中间件组件
+            5、实现errorPage中间件组件
+            见error-all.js
 
 6.7 小结
