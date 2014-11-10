@@ -533,6 +533,62 @@ Express 构建在Connect 之上
         而不要求URL中使ID。
 
     6.5.3 构建一个重写URL的中间件组件
+        重写URL可能非常有用。
+        比如你想接受一个到/blog/posts/my-post-title的请求，
+        基于这个URL最后的文章标题（通常称为URL的缩略名部分）查找文章的ID，
+        然后将URL转换成/blog/posts。
+        这个任务特别适合中间件。
+
+        下面这个校博客程序先用rewrite中间件组件基于缩略名重写URL，
+        然后再将控制权交给showPost组件：
+        var connect = require('connect');
+        var url = require('url');
+        var app = connect()
+                    .use(rewrite)
+                    .use(showPost)
+                    .listen(3000)
+
+
+        代码清单6-11是rewrite中间件的实现，
+        对URL进行解析，
+        得到pathname,
+        然后将pathname跟正则表达式匹配。
+        经过匹配得出的第一个结果（缩略名）
+        被传给了假想的findPostIdBySlug函数，
+        让它通过缩略名找到博客文章ID。
+        如果成果，
+        就按你的想法给请求URL（req.url）重新赋值。
+        在这个例子中使把ID追加到/blog/post上，
+        以便后续的中间件能通过ID查找文章。
+
+        代码清代6-11 基于缩略名重写请求URL的中间件
+        var path = url.parse(req.url).pathname;
+
+        function rewrite(req, res, next) {
+            var match = path.match(/^\/blog\/posts\/(.+)/);
+            if(match) {
+                findPostIdBySlug(match[1], function(err, id) {
+                    if(err) return next(err);
+                    if(!id) return next(new Error('User not found'));
+
+                    req.url = '/blog/posts/' + id;
+                    next();
+                });
+            } else {
+                next();
+            }
+        }
+
+        这些例子说明了什么
+        这些例子传达了一个重要信息，
+        在构建中间件时，
+        你应该关注那些小型的、可配置的部分。
+        构建大量微小的、模块化的、可重用的中间件组件，
+        合起来搭成你的程序。
+        保持中间件的小型化和专注性真的有助于将复杂的程序逻辑分解成更小的组成部分。
+
+        接下来我们要看Connect中与中间件相关的一个概念：处理程序错误。
+
 6.6 使用错误处理中间件
     6.6.1 Connect的默认错误处理器
     6.6.2 自行处理程序错误
