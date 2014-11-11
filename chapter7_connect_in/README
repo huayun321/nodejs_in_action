@@ -6,6 +6,41 @@
     处理web程序安全的中间件
     提供静态文件服务的中间件
 
+    在上一章里，
+    你已经学过了中间件是什么了，
+    也学过如何创建中间件，
+    以及在Connect中如何使用他们了。
+    但Connect真正强大之处在于它自带的中间件，
+    他们可以满足常见的web程序开发需求，
+    比如会话管理、cookie解析、请求主体解析、请求日志等。
+    这些复杂程度各异的中间件为构建简单的Web程序或更高层的Web框架提供了绝佳的起点。
+
+    本章通篇都在解释和阐述这些常用的自带中间件组件。
+    表7-1 使我们将要讨论的中间件汇总。
+    我们首先会讨论构建前当的web程序所需的各种解析器中间件，
+    因为他们是大多数中间件的基础。
+
+    表7-1 connect中间件快速参考指南
+
+    中间件组件       章节      介绍
+    cookieParser()  7.1.1    为后续中间件提供哦你req.cookies和req.signedCookies
+    bodyParser()    7.1.2    为后续中间件提供req.body和req.files
+    limit()         7.1.3    基于给定字节长度限制请求主体的大小。必须用在bodyParser中间件之前
+    query()         7.1.4    为后续中间件提供req.query
+    logger()        7.2.1    将http请求的信息输出到stdout或日志文件之类的流中
+    favicon()       7.2.2    响应/favicon.ico http请求。通常放在中间件logger前面，这样它就不会出现在你的日志文件中了
+    methodOverride()7.2.3    可以替不能使哟你正确请求方法的浏览器仿造req.method，依赖于bodyParser
+    vhost()         7.2.4    根据制定的主机名（比如nodejs.org）使用给定的中间件和或http服务器实例
+    session()       7.2.5    为用户设置一个http会话，并提供一个可以跨越请求的持久化req.session对象。依赖于cookieParser
+    basicAuth()     7.3.1    为程序提供http基本认证
+    csrf()          7.3.2    防止http表单中的跨站请求伪造攻击，依赖于session
+    errorHandler()  7.3.3    当出现错误时把堆栈跟踪信息返回给客户端。在开发时很使用，不过不要用在生产环境中。
+    static()        7.4.1    把指定目录中的文件发给http客户端。跟connect的挂载功能配合的很好
+    compress()      7.4.2    用gzip压缩优化http响应
+    directory()     7.4.3    为http客户端提供目录清单服务，基于客户端的accept请求头（普通文本，json或html）提供经过优化的结果
+
+
+
 7.1 解析cookie、请求主体和查询字符串的中间件
     7.1.1 cookieParser(): 解析http cookie
         1、基本用法
