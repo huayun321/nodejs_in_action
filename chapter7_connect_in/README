@@ -42,6 +42,16 @@
 
 
 7.1 解析cookie、请求主体和查询字符串的中间件
+    node中没有解析cookie、缓存请求体、
+    解析复杂查询字符串之类高层web程序概念的核心模块，
+    所以connect为你提供了实现这些功能的中间件。
+    本节会讨论四个解析请求数据的自带中间件组件：
+        cookieParser() 解析来自浏览器的cookie，放到req.cookies中;
+        bodyParser()  读取并解析请求主体，放到req.body中;
+        limit() 跟bodyParser()联手防止读取过大的请求;
+        query() 解析请求URL的查询字符串，放到req.query中。
+    我们先从cookie开始，因为http使无状态协议，所以浏览器经常用它模拟状态。
+
     7.1.1 cookieParser(): 解析http cookie
         1、基本用法
         2、常规cookie
