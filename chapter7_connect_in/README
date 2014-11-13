@@ -53,7 +53,25 @@
     我们先从cookie开始，因为http使无状态协议，所以浏览器经常用它模拟状态。
 
     7.1.1 cookieParser(): 解析http cookie
+        connect的cookie解析其支持常规cookie、
+        签名cookie和特殊的json cookie。
+        req.cookies默认使用常规未签名cookie组装而成的。
+        如果你向支持session()中间件要求的签名cookie，
+        在创建cookieParser()实例时钥传入一个加密用的字符串。
+
+        在服务器段设定cookie
+            中间件cookieParser()不会为设定出站cookie提供任何帮助。
+            为此你应该用res.setHeader()函数设定名为Set-Cookie的响应头。
+            Connect针对Set-Cookie响应头这以特殊情况为Node默认的res.setHeader()函数打了补丁，
+            所以它可以按你期望的方式工作。
         1、基本用法
+            作为参数传给cookieParser()的秘钥用来对cookie签名和解签，
+            让connect可以确定cookie的内容是否被篡改过（因为只有你的程序才直到秘钥的值）。
+            这个秘钥通常应该是个长度合理的字符串，
+            有可能使随机生成的。
+
+            下例中的秘钥使tobi is a cool ferret:
+
         2、常规cookie
         3、签名cookie
         4、JSON cookie
