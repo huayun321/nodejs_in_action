@@ -274,3 +274,37 @@ app.enable(setting)等同于app.set(setting, true),
 app.enabled(setting)可以用来检查该值是否启用了。
 app.disable(setting)和app.disabled(setting)补足了boolean类型的变体。
 看完了如何使用配置系统，接下来我们去看看express中的视图渲染。
+
+
+8.3 渲染视图
+尽管我们前面说过，几乎所有node社区中的模板引擎都能用在express中，
+但本章的程序用的是ejs模板。
+不熟悉ejs也不用担心，它很像其他语言(php jsp erb)中的模板语言。
+本章只是介绍一些ejs的基础知识，但第11章会详细介绍ejs和其他几个模板引擎。
+
+不管是渲染整个html页面、一个html片段，
+或者一个rss预订源，渲染视图对几乎所有程序来说都至关重要。
+它的概念很简单：
+你把数据传给视图，然后数据会被转换，
+通常是变成web程序中的html。
+视图的概念对你来说应该不算陌生，
+因为大多数框架都提供了类似的功能。
+图8-11阐明了视图如何形成新的数据表示。
+
+express中两种渲染视图的办法：
+在程序层面用app.render(),
+在请求或响应层面用res.render(),
+它在内部用的也是前者。
+本章只用res.render()。
+如果你看一下./routes/index.js，
+会看到一个输出的函数：index。
+这个函数调用res.render()，
+渲染./views/index.ejs模板，代码如下所示：
+exports.index=function(req, res) {
+    res.render('index', {title: 'express'});
+};
+在本节中，你会了解如何进行下列操作：
+    配置express视图系统;
+    查找视图文件;
+    在渲染视图时输出数据。
+在认真研究res.render()之前，我们先来配置视图系统。
