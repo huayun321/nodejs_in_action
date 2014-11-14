@@ -168,3 +168,109 @@ app.listen(3000)
 看完生成的程序，
 接下来我们要深入到特定环境下的配置中去。
 
+8.2 配置express和你的程序
+程序的需求取决于它所运行的环境。
+比如说，当你的产品处于开发环境中时，
+你可能想要详尽的日志，但在生产环境中，
+你可能想要精简的日志和gzip压缩。
+除了配置特定环境下的功能，
+你可能也向定义一些程序层面的设定，
+以便让express知道你用的使什么模板引擎，
+以及到哪里去找模板。
+express还允许你定义定制的配置键值对。
+
+express有一个极简的环境驱动配置系统，
+由五个方法组成，
+全部由环境变量node_env驱动：
+    app.configure()
+    app.set()
+    app.get()
+    app.enable()
+    app.disable()
+=============================
+4.x 后express不再使用app.configure()
+=============================
+在本节中，
+你将会看到如何用配置系统定制express的行为，
+以及如何依照你的目的在开发过程中使用它。
+
+我们先认真探讨下“基于环境的配置”意味着什么。
+
+设定环境变量
+要在unix中设置环境变量，可以用这个命令：
+$NODE_ENV=production node app
+在windows中用这个：
+set NODE_ENV=production
+node app
+这些环境变量会出现在你程序里的process.env对象中。
+===============================
+4.x 后改为随意  可以在app里设定set一个变量 然后判断
+或者 获取系统的环境变量 process.env.*
+linux系统可以设置 系统环境变量 用户环境变量
+临时环境变量
+===============================
+基于环境的配置
+尽管环境变量源自express，
+但现在很多node框架都用它通知Node程序它在什么环境中，
+默认为开发环境。
+
+如代码8-3所示，
+app.configure()方法接受一个表示环境的可选字符串，
+以及一个函数。
+当环境与传入的字符串匹配时，
+回调函数会立即被调用;
+当只给出函数时，
+在所有环境中都会调用它。
+这些环境的名称完全使随意的。
+比如说，
+你可以用development、stage、test和production,或简写为prod。
+
+代码清单 8-3 用app.configure()设定特定环境的选项
+app.configure(function(){
+    app.set('views', __dirname + 'views');
+    app.set('view engine', 'ejs');
+});
+
+app.configure('development' function() {
+    app.use(exrpess.errorHandler());
+});
+
+app.configure()只是糖衣，下面这段代码和前面那个效果是一样的。
+你不是必须用这个特性;
+比如说，你可以从json或yaml中加载配置。
+代码清单8-4 用条件判断设定特定环境的选项
+var env=process.env.NODE_ENV || 'development';
+
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+
+if('development' == env) {
+    app.use(express.errorHandler());
+}
+
+================
+4.x后 只使用下面的方法
+=================
+为了让你你可以定制express的行为，
+express内部使用了配置系统，
+但你也可以使用配置系统。
+本章要构建的程序只有一个设定项，
+photos，
+它的值是一个目录，
+用来存放传上来的图片。
+这个值在生产环境中可以修改，
+以便在有更多硬盘空间的卷中保存和提供照片：
+app.configure(function() {
+    app.set('photos', __dirname + '/public/photos');
+});
+
+app.configure('production', function() {
+    app.set('photos', '/mounted-volume/photos');
+});
+
+express还为boolean类型的配置项提供了app.set()和app.get()的变体。
+比如说，
+app.enable(setting)等同于app.set(setting, true),
+app.enabled(setting)可以用来检查该值是否启用了。
+app.disable(setting)和app.disabled(setting)补足了boolean类型的变体。
+看完了如何使用配置系统，接下来我们去看看express中的视图渲染。
