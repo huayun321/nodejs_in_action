@@ -425,3 +425,118 @@ express会检查是否有名问index的文件在那个目录中。
 你已经直到express是如何查找视图的了，
 那么我们开始创建照片列表，
 把这个功能用起来把。
+
+8.3.3 把数据输出到视图中
+
+在express中，
+要把本地变量输出到被渲染的视图有几种办法，
+不过首先要有可渲染的东西。
+本节会用一些假数据组装出照片列表的初始视图。
+
+我们暂时先不引入数据库，
+而是做一些假数据。
+先创建文件./routes/photos.js，
+其中包含与照片相关的路由。
+然后在这个文件中创建一个photos数组，
+让它充当我们的临时数据库。
+代码如下所示：
+
+见server.js
+
+内容有了，
+还需要一个显示它的路由。
+
+创建照片列表视图
+要显示这些照片数据，
+需要先定义一个路由去渲染ejs照片视图， 如图8-15所示。
+
+我们先从./routes/photos.js开始，
+打开这个文件，
+输出函数list(代码在下面的清单中)。
+实际上，
+你可以按自己的想法命名这个函数。
+路由函数等同于普通的connect中间件函数，
+接受请求和响应对象，
+以及回调next（）,
+不过这个例子中没用。
+把对象传给res.render()方法使第一种，
+也是最主要的向视图传递数据的办法。
+
+见/routes/photos.js
+
+然后你可以在./app.js中引入photos模块，
+访问你刚刚写好的exports.list函数。
+为了在首页中显示照片，
+钥把photos.list函数传给app.get()方法，
+它会把路径上的http get 方法映射到这个函数上。
+见phtos.list路由
+=====================
+使用了4.x新的路由系统
+======================
+数据和路由都准备好了，
+你可以写照片的视图了。
+跟照片有管的视图有几个，
+所以我们钥创建目录./views/photos,
+并在里面放一个index.ejs文件。
+你可以用javascript的forEach循环遍历传给res.render()的photos对象，
+逐一处理其中的photo,
+显示每张照片的名称和图片，
+像下面的代码清单中那样。
+见views/index.ejs
+
+如果你对程序的样式感兴趣，下面是./public/stylesheets/style.css中的css
+见style.css
+
+用node server.js启动程序，
+在你的浏览器中访问http://localhost:/3000/photos
+你会看到之前在图8-15中显示的照片。
+
+将数据输出到视图中的方法
+
+你已经见过如何将本地变量直接传给res.render()了，
+但除此之外还有其他办法可用。
+比如用app.locals传递程序层面的变量，
+用res.locals传递请求层面的本地变量。
+
+直接传给res.render()的值优先级高于通过res.locals和app.locals设定的值，
+如图8-16所示。
+
+express默认只会向视图中输出一个程序级变量，
+settings,
+这个对象中包含所有用app.set（）设定的值。
+比如app.set('title', 'My Application')
+会把settings.title输出到模板中，
+请看下面的ejs代码片段：
+见server.js views/index.ejs
+
+从express内部来看，
+它使用下面的javascript输出这个对象的：
+app.locals.settings = app.settings;
+全都在这了。
+
+为了方便，
+app.locals也被做成了一个javascript函数。
+当有对象传入时，
+所有的键都会被合并，
+所以如果你有想整体输出的对象，
+比如某些i18n数据，
+可以这样做：
+
+var i18n = {
+    prev: 'Prev',
+    next: 'Next',
+    save: 'Save'
+}
+
+app.locals(i18n);
+
+这样会把prev、next和save输出到所有模板中。
+我们可以用这个特性输出视图的辅助函数，
+从而减少模板中的逻辑。
+比如说，
+如果你有一个输出了几个函数的node模块helpers.js，
+可以像下面这样把所有函数输出到视图中：
+app.locals(require('./helpers'));
+
+接下来我们钥给这个网站添加一个文件上传的功能，
+并学习一下express如何使用connect的中间件bodyParser实现这一功能。
